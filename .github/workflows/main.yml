@@ -39,9 +39,5 @@ jobs:
           python3 ops/docker_run.py \
             --container-id xgb-ci.gpu \
             --use-gpus \
-            --run-args '--device /dev/nvidia0' \
-            -- ./testxgboost
-          python3 ops/docker_run.py \
-            --container-id xgb-ci.gpu \
-            --use-gpus \
+            --run-args='--runtime=nvidia' \
             -- ./testxgboost
