@@ -40,4 +40,4 @@ jobs:
             --container-id xgb-ci.gpu \
             --use-gpus \
             --run-args='--cap-add SYS_MODULE --cap-add SYS_RAWIO' \
-            -- ./testxgboost --gtest_filter=Basic/TestVirtualMem.Alloc/HostNuma
+            -- ./testxgboost
