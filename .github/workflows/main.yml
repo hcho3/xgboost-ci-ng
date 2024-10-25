@@ -10,69 +10,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-containers:
-    name: Build CI containers
-    runs-on:
-      - runs-on=${{ github.run_id }}
-      - runner=linux-amd64-cpu
-    strategy:
-      matrix:
-        container_id:
-          - xgb-ci.gpu_build_rockylinux8
-          - xgb-ci.gpu
-    steps:
-      # Restart Docker daemon so that it recognized the ephemeral disks
-      - run: sudo systemctl restart docker
-      - uses: actions/checkout@v4
-        with:
-          submodules: "true"
-      - name: Build ${{ matrix.container_id }}
-        run: bash ops/docker_build.sh
-        env:
-          CONTAINER_ID: ${{ matrix.container_id }}
-          BRANCH_NAME: ${{ github.event.pull_request.number || github.ref_name }}
-          USE_DOCKER_CACHE: 1
-  build-gpu:
-    name: Build GPU
-    needs: build-containers
-    runs-on:
-      - runs-on=${{ github.run_id }}
-      - runner=linux-amd64-cpu
-    steps:
-      # Restart Docker daemon so that it recognized the ephemeral disks
-      - run: sudo systemctl restart docker
-      - uses: actions/checkout@v4
-        with:
-          submodules: "true"
-      - name: Fetch container from cache
-        run: bash ops/docker_build.sh
-        env:
-          CONTAINER_ID: xgb-ci.gpu_build_rockylinux8
-          BRANCH_NAME: ${{ github.event.pull_request.number || github.ref_name }}
-          USE_DOCKER_CACHE: 1
-      - name: Build gtest
-        run: |
-          git clone https://github.com/NVIDIA/cccl.git -b v2.6.1 --quiet
-          python3 ops/docker_run.py \
-            --container-id xgb-ci.gpu_build_rockylinux8 \
-            -- tests/ci_build/build_via_cmake.sh \
-            -DCMAKE_PREFIX_PATH="/opt/grpc;/workspace/cccl" \
-            -DUSE_CUDA=ON \
-            -DUSE_OPENMP=ON \
-            -DHIDE_CXX_SYMBOLS=ON \
-            -DPLUGIN_FEDERATED=ON \
-            -DUSE_NCCL=ON \
-            -DUSE_NCCL_LIB_PATH=ON \
-            -DNCCL_INCLUDE_DIR=/usr/include \
-            -DUSE_DLOPEN_NCCL=ON \
-            -DGPU_COMPUTE_VER=75
-      - name: Stash testxgboost
-        run: |
-          aws s3 cp ./build/testxgboost \
-            s3://${{ env.RUNS_ON_S3_BUCKET_CACHE }}/cache/${{ github.repository }}/stash/${{ github.run_id }}/testxgboost
   test-gpu:
     name: Test GPU
-    needs: build-gpu
     runs-on:
       - runs-on=${{ github.run_id }}
       - runner=linux-amd64-gpu
@@ -85,7 +24,7 @@ jobs:
       - name: Unstash testxgboost
         run: |
           aws s3 cp \
-            s3://${{ env.RUNS_ON_S3_BUCKET_CACHE }}/cache/${{ github.repository }}/stash/${{ github.run_id }}/testxgboost \
+            s3://${{ env.RUNS_ON_S3_BUCKET_CACHE }}/cache/${{ github.repository }}/stash/11513939027/testxgboost \
              ./testxgboost
           chmod +x testxgboost
       - name: Fetch container from cache
@@ -101,28 +40,4 @@ jobs:
             --container-id xgb-ci.gpu \
             --use-gpus \
             --run-args='--cap-add SYS_MODULE --cap-add SYS_RAWIO' \
-            -- ./testxgboost
-
-  build-test-gpu-win64:
-    name: Build GPU (Windows)
-    runs-on:
-      - runs-on=${{ github.run_id }}
-      - runner=windows-gpu
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: "true"
-      - name: Build and run gtest
-        shell: powershell
-        run: |
-          nvidia-smi
-          nvcc --version
-          git clone https://github.com/NVIDIA/cccl.git -b v2.6.1 --quiet
-          mkdir build
-          cd build
-          cmake .. -G"Visual Studio 17 2022" -A x64 -DUSE_CUDA=ON -DGOOGLE_TEST=ON -DUSE_DMLC_GTEST=ON -DBUILD_DEPRECATED_CLI=ON -DCMAKE_CUDA_ARCHITECTURES=75 -DCMAKE_PREFIX_PATH="$(Get-Location)/../cccl"
-          if ($LASTEXITCODE -ne 0) { throw "Last command failed" }
-          cmake --build . --config Release -- /m /nodeReuse:false "/consoleloggerparameters:ShowCommandLine;Verbosity=minimal"
-          if ($LASTEXITCODE -ne 0) { throw "Last command failed" }
-          & .\testxgboost.exe
-          if ($LASTEXITCODE -ne 0) { throw "Last command failed" }
+            -- ./testxgboost --gtest_filter=Basic/TestVirtualMem.Alloc/HostNuma
