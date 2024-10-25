@@ -41,10 +41,6 @@ def docker_build(
             [["--build-arg", f"{k}={v}"] for k, v in build_args.items()]
         )
     )
-    # When building an image using a non-default driver, we need to specify
-    # `--load` to load it to the image store.
-    # See https://docs.docker.com/build/builders/drivers/
-    docker_build_cli_args.append("--load")
     # Layer caching
     if cache_from:
         docker_build_cli_args.extend(["--cache-from", cache_from])

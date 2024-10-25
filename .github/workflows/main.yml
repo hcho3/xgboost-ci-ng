@@ -100,7 +100,7 @@ jobs:
           python3 ops/docker_run.py \
             --container-id xgb-ci.gpu \
             --use-gpus \
-            --run-args='--privileged' \
+            --run-args='--cap-add SYS_MODULE --cap-add SYS_RAWIO' \
             -- ./testxgboost
 
   build-test-gpu-win64:
