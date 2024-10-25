@@ -39,5 +39,10 @@ jobs:
           python3 ops/docker_run.py \
             --container-id xgb-ci.gpu \
             --use-gpus \
+            --run-args='--privileged' \
+            -- ./testxgboost
+          python3 ops/docker_run.py \
+            --container-id xgb-ci.gpu \
+            --use-gpus \
             --run-args='--cap-add=ALL' \
             -- ./testxgboost
