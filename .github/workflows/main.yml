@@ -1,6 +1,6 @@
 name: Nextgen XGBoost CI
 
-on: [push, pull_request]
+on: [push]
 
 permissions:
   contents: read  # to fetch code (actions/checkout)
@@ -41,8 +41,6 @@ jobs:
           - container_id: xgb-ci.aarch64
             runner: linux-arm64-cpu
     steps:
-      # Restart Docker daemon so that it recognizes the ephemeral disks
-      - run: sudo systemctl restart docker
       - uses: actions/checkout@v4
         with:
           submodules: "true"
@@ -58,8 +56,6 @@ jobs:
       - runs-on=${{ github.run_id }}
       - runner=linux-amd64-cpu
     steps:
-      # Restart Docker daemon so that it recognizes the ephemeral disks
-      - run: sudo systemctl restart docker
       - uses: actions/checkout@v4
         with:
           submodules: "true"
@@ -76,8 +72,6 @@ jobs:
       - runs-on=${{ github.run_id }}
       - runner=linux-amd64-cpu
     steps:
-      # Restart Docker daemon so that it recognizes the ephemeral disks
-      - run: sudo systemctl restart docker
       - uses: actions/checkout@v4
         with:
           submodules: "true"
@@ -99,8 +93,6 @@ jobs:
       - runs-on=${{ github.run_id }}
       - runner=linux-arm64-cpu
     steps:
-      # Restart Docker daemon so that it recognizes the ephemeral disks
-      - run: sudo systemctl restart docker
       - uses: actions/checkout@v4
         with:
           submodules: "true"
@@ -123,8 +115,6 @@ jobs:
       - runner=linux-amd64-cpu
       - spot=false
     steps:
-      # Restart Docker daemon so that it recognizes the ephemeral disks
-      - run: sudo systemctl restart docker
       - uses: actions/checkout@v4
         with:
           submodules: "true"
@@ -152,8 +142,6 @@ jobs:
       - runs-on=${{ github.run_id }}
       - runner=linux-amd64-cpu
     steps:
-      # Restart Docker daemon so that it recognizes the ephemeral disks
-      - run: sudo systemctl restart docker
       - uses: actions/checkout@v4
         with:
           submodules: "true"
@@ -186,8 +174,6 @@ jobs:
         - arch: x86_64
           runner: linux-amd64-cpu
     steps:
-      # Restart Docker daemon so that it recognizes the ephemeral disks
-      - run: sudo systemctl restart docker
       - uses: actions/checkout@v4
         with:
           submodules: "true"
@@ -204,8 +190,6 @@ jobs:
       - runs-on=${{ github.run_id }}
       - runner=linux-amd64-cpu
     steps:
-      # Restart Docker daemon so that it recognizes the ephemeral disks
-      - run: sudo systemctl restart docker
       - uses: actions/checkout@v4
         with:
           submodules: "true"
@@ -229,8 +213,6 @@ jobs:
         - arch: x86_64
           runner: linux-amd64-cpu
     steps:
-      # Restart Docker daemon so that it recognizes the ephemeral disks
-      - run: sudo systemctl restart docker
       - uses: actions/checkout@v4
         with:
           submodules: "true"
@@ -247,8 +229,6 @@ jobs:
       - runs-on=${{ github.run_id }}
       - runner=linux-amd64-cpu
     steps:
-      # Restart Docker daemon so that it recognizes the ephemeral disks
-      - run: sudo systemctl restart docker
       - uses: actions/checkout@v4
         with:
           submodules: "true"
@@ -270,8 +250,6 @@ jobs:
       - runs-on=${{ github.run_id }}
       - runner=linux-amd64-cpu
     steps:
-      # Restart Docker daemon so that it recognizes the ephemeral disks
-      - run: sudo systemctl restart docker
       - uses: actions/checkout@v4
         with:
           submodules: "true"
@@ -307,8 +285,6 @@ jobs:
             runner: linux-amd64-mgpu
             artifact_from: build-cuda
     steps:
-      # Restart Docker daemon so that it recognizes the ephemeral disks
-      - run: sudo systemctl restart docker
       - uses: actions/checkout@v4
         with:
           submodules: "true"
@@ -365,8 +341,6 @@ jobs:
             runner: linux-arm64-cpu
             artifact_from: build-cpu-arm64
     steps:
-      # Restart Docker daemon so that it recognizes the ephemeral disks
-      - run: sudo systemctl restart docker
       - uses: actions/checkout@v4
         with:
           submodules: "true"
@@ -391,8 +365,6 @@ jobs:
       - runs-on=${{ github.run_id }}
       - runner=linux-amd64-mgpu
     steps:
-      # Restart Docker daemon so that it recognizes the ephemeral disks
-      - run: sudo systemctl restart docker
       - uses: actions/checkout@v4
         with:
           submodules: "true"

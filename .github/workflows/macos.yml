@@ -1,6 +1,6 @@
 name: Nextgen XGBoost CI, MacOS
 
-on: [push, pull_request]
+on: [push]
 
 permissions:
   contents: read  # to fetch code (actions/checkout)

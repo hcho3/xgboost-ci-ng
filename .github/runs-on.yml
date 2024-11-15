@@ -6,6 +6,8 @@ images:
     arch: "x64"
     owner: "492475357299"  # XGBooost CI
     name: "xgboost-ci-runs-on-linux-*"
+    preinstall: "exit 1"
+
   windows-amd64:
     platform: "windows"
     arch: "x64"
